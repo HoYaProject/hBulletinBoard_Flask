@@ -1,4 +1,9 @@
 {
     "editor.formatOnSave": true,
-    "python.formatting.provider": "black"
+    "python.linting.pylintArgs": [
+        "--load-plugins",
+        "pylint_flask",
+        "pylint_flask_sqlalchemy",
+    ],
+    "python.formatting.provider": "black",
 }

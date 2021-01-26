@@ -1,4 +1,5 @@
 pylint
 black
 flask
+flask-migrate
 python-dotenv
