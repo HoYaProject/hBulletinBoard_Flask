@@ -2,4 +2,5 @@ pylint
 black
 flask
 flask-migrate
+flask-bootstrap4
 python-dotenv

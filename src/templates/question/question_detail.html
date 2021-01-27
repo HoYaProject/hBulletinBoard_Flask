@@ -1,19 +1,35 @@
-<h1>{{ question.subject }}</h1>
-<div>{{ question.content }}</div>
+{% extends "bootstrap/base.html" %}
 
-<h5>There are {{ question.answer_set|length }} answers.</h5>
-<div>
-  <ul>
+{% block content %}
+<div class="container my-3">
+    <h2 class="border-bottom py-2">{{ question.subject }}</h2>
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" style="white-space: pre-line;">{{ question.content }}</div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <div class="badge badge-light p-2">{{ question.created_date }}</div>
+        </div>
+    </div>
+
+
+    <h5 class="border-bottom my-3 py-2">There are {{ question.answer_set|length }} answers.</h5>
     {% for answer in question.answer_set %}
-    <li>{{ answer.content }}</li>
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" style="white-space: pre-line;">{{ answer.content }}</div>
+            <div class="d-flex justify-content-end">
+                <div class="badge badge-light p-2">{{ answer.created_date }}</div>
+            </div>
+        </div>
+    </div>
     {% endfor %}
-  </ul>
-</div>
 
-<form
-  action="{{ url_for('answer.create', question_id=question.id) }}"
-  method="post"
->
-  <textarea name="content" id="content" rows="15"></textarea>
-  <input type="submit" value="Send" />
-</form>
+    <form class="my-3" action="{{ url_for('answer.create', question_id=question.id) }}" method="post">
+        <div class="form-group">
+            <textarea class="form-control" name="content" id="content" rows="10"></textarea>
+        </div>
+        <input class="btn btn-primary" type="submit" value="Send" />
+    </form>
+</div>
+{% endblock %}

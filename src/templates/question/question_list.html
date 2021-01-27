@@ -1,13 +1,32 @@
-{% if question_list %}
-<ul>
-  {% for question in question_list %}
-  <li>
-    <a href="{{ url_for('question.detail', question_id=question.id) }}">
-      {{ question.subject }}
-    </a>
-  </li>
-  {% endfor %}
-</ul>
-{% else %}
-<p>There are no questions.</p>
-{% endif %}
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+<div class="container my-3">
+  <table class="table">
+    <thead>
+      <tr class="thead-dark">
+        <th>No</th>
+        <th>Title</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if question_list %} {% for question in question_list %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>
+          <a href="{{ url_for('question.detail', question_id=question.id) }}">
+            {{ question.subject }}
+          </a>
+        </td>
+        <td>{{ question.created_date }}</td>
+      </tr>
+      {% endfor %} {% else %}
+      <tr>
+        <td colspan="3">There are no questions.</td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
