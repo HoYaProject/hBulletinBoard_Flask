@@ -1,0 +1,13 @@
+{% if question_list %}
+<ul>
+  {% for question in question_list %}
+  <li>
+    <a href="{{ url_for('question.detail', question_id=question.id) }}">
+      {{ question.subject }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>There are no questions.</p>
+{% endif %}

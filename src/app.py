@@ -2,7 +2,7 @@ from flask import Flask
 from flask_migrate import Migrate
 import config
 from .models.common import db
-from .views import main_views
+from .views import main_views, question_views
 
 
 app = Flask(__name__)
@@ -17,6 +17,7 @@ migrate.init_app(app, db)
 
 # Blueprint
 app.register_blueprint(main_views.bp)
+app.register_blueprint(question_views.bp)
 
 
 if __name__ == "__main__":
