@@ -4,3 +4,6 @@
 
 # virtual Environment
 **/.venv/
+
+# MAC OSX
+**/.DS_Store
