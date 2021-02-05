@@ -6,7 +6,7 @@
     <thead>
       <tr class="thead-dark">
         <th>No</th>
-        <th>Title</th>
+        <th>Subject</th>
         <th>Date</th>
       </tr>
     </thead>
@@ -28,5 +28,6 @@
       {% endif %}
     </tbody>
   </table>
+  <a href="{{ url_for('question.create') }}" class="btn btn-primary">Post Question</a>
 </div>
 {% endblock %}

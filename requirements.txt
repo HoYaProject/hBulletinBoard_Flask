@@ -3,4 +3,5 @@ black
 flask
 flask-migrate
 flask-bootstrap4
+flask-WTF
 python-dotenv
