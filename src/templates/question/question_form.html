@@ -1,4 +1,4 @@
-{% extends "bootstrap/base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 <div class="container">
@@ -16,7 +16,8 @@
         </div>
         <div class="form-group">
             <label for="content">Content</label>
-            <textarea class="form-control" id="content" name="content" rows="10">{{ form.content.date or '' }}</textarea>
+            <textarea class="form-control" id="content" name="content"
+                rows="10">{{ form.content.date or '' }}</textarea>
         </div>
         <button class="btn btn-primary" type="submit">Post</button>
     </form>
