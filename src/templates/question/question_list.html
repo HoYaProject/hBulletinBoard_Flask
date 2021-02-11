@@ -17,7 +17,7 @@
             {{ question.subject }}
           </a>
         </td>
-        <td>{{ question.created_date }}</td>
+        <td>{{ question.created_date|datetime }}</td>
       </tr>
       {% endfor %} {% else %}
       <tr>

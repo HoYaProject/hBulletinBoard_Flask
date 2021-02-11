@@ -2,6 +2,8 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 import config
+
+from .filter import format_datetime
 from .models.common import db
 from .views import main_views, question_views, answer_views
 
@@ -20,6 +22,9 @@ migrate.init_app(app, db)
 app.register_blueprint(main_views.bp)
 app.register_blueprint(question_views.bp)
 app.register_blueprint(answer_views.bp)
+
+# Filter
+app.jinja_env.filters["datetime"] = format_datetime
 
 # Bootstrap
 Bootstrap(app)
