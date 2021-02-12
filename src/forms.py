@@ -13,7 +13,7 @@ class AnswerForm(FlaskForm):
     content = TextAreaField("Content", validators=[DataRequired()])
 
 
-class CreateUserForm(FlaskForm):
+class SignUpForm(FlaskForm):
     username = StringField(
         "Username", validators=[DataRequired(), Length(min=3, max=25)]
     )
@@ -23,3 +23,10 @@ class CreateUserForm(FlaskForm):
     )
     password2 = PasswordField("Password Confirm", validators=[DataRequired()])
     email = EmailField("Email", [DataRequired(), Email()])
+
+
+class SignInForm(FlaskForm):
+    username = StringField(
+        "Username", validators=[DataRequired(), Length(min=3, max=25)]
+    )
+    password = PasswordField("Password", validators=[DataRequired()])

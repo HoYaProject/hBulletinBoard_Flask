@@ -6,7 +6,7 @@ from flask_bcrypt import Bcrypt
 
 from .filter import format_datetime
 from .models.common import db
-from .views import main_views, question_views, answer_views, auth_views
+from .views import main_views, question_views, answer_views, account_views
 from .utils import crypto
 
 app = Flask(__name__)
@@ -24,7 +24,7 @@ migrate.init_app(app, db)
 app.register_blueprint(main_views.bp)
 app.register_blueprint(question_views.bp)
 app.register_blueprint(answer_views.bp)
-app.register_blueprint(auth_views.bp)
+app.register_blueprint(account_views.bp)
 
 # Filter
 app.jinja_env.filters["datetime"] = format_datetime
