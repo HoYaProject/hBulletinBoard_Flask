@@ -20,3 +20,4 @@ class AnswerModel(db.Model):
         nullable=False,
     )
     user = db.relationship("UserModel", backref=db.backref("answer_set"))
+    modified_date = db.Column(db.DateTime(), nullable=True)

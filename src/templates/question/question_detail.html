@@ -6,15 +6,28 @@
     <div class="card my-3">
         <div class="card-body">
             <div class="card-text" style="white-space: pre-line;">{{ question.content }}</div>
-        </div>
-        <div class="d-flex justify-content-end">
-            <div class="badge badge-light p-2 text-left">
-                <div class="mb-2">{{ question.user.username }}</div>
-                <div>{{ question.created_date|datetime }}</div>
+            <div class="d-flex justify-content-end">
+                {% if question.modified_date %}
+                <div class="badge badge-light p-2 text-left mx-3">
+                    <div class="mb-2">Modified at</div>
+                    <div>{{ question.modified_date|datetime }}</div>
+                </div>
+                {% endif %}
+                <div class="badge badge-light p-2 text-left">
+                    <div class="mb-2">{{ question.user.username }}</div>
+                    <div>{{ question.created_date|datetime }}</div>
+                </div>
             </div>
+            {% if g.user == question.user %}
+            <div class="my-3">
+                <a class="btn btn-sm btn-outline-secondary"
+                    href="{{ url_for('question.modify', question_id=question.id) }}">Modify</a>
+                <a class="delete btn btn-sm btn-outline-secondary" href="#"
+                    data-uri="{{ url_for('question.delete', question_id=question.id) }}">Delete</a>
+            </div>
+            {% endif %}
         </div>
     </div>
-
 
     <h5 class="border-bottom my-3 py-2">There are {{ question.answer_set|length }} answers.</h5>
     {% for answer in question.answer_set %}
@@ -22,11 +35,25 @@
         <div class="card-body">
             <div class="card-text" style="white-space: pre-line;">{{ answer.content }}</div>
             <div class="d-flex justify-content-end">
+                {% if answer.modified_date %}
+                <div class="badge badge-light p-2 text-left mx-3">
+                    <div class="mb-2">Modified at</div>
+                    <div>{{ answer.modified_date|datetime }}</div>
+                </div>
+                {% endif %}
                 <div class="badge badge-light p-2 text-left">
-                    <div class="mb-2">{{ question.user.username }}</div>
+                    <div class="mb-2">{{ answer.user.username }}</div>
                     <div>{{ answer.created_date|datetime }}</div>
                 </div>
             </div>
+            {% if g.user == answer.user %}
+            <div class="my-3">
+                <a class="btn btn-sm btn-outline-secondary"
+                    href="{{ url_for('answer.modify', answer_id=answer.id) }}">Modify</a>
+                <a class="delete btn btn-sm btn-outline-secondary" href="#"
+                    data-uri="{{ url_for('answer.delete', answer_id=answer.id) }}">Delete</a>
+            </div>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
@@ -49,4 +76,17 @@
         <input class="btn btn-primary" type="submit" value="Send" />
     </form>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.delete').on('click', function () {
+            if (confirm('Are you sure?')) {
+                location.href = $(this).data('uri')
+            }
+        })
+    })
+</script>
 {% endblock %}

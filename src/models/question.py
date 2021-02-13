@@ -10,3 +10,4 @@ class QuestionModel(db.Model):
         db.Integer, db.ForeignKey("user_model.id", ondelete="CASCADE"), nullable=False
     )
     user = db.relationship("UserModel", backref=db.backref("question_set"))
+    modified_date = db.Column(db.DateTime(), nullable=True)

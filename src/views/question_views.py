@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Blueprint, render_template, request, redirect, url_for, g
+from flask import Blueprint, render_template, request, redirect, url_for, g, flash
 
 from ..models.common import db
 from src.models.question import QuestionModel
@@ -42,3 +42,35 @@ def detail(question_id):
     return render_template(
         "question/question_detail.html", question=question, form=form
     )
+
+
+@bp.route("/modify/<int:question_id>", methods=("GET", "POST"))
+@signin_required
+def modify(question_id):
+    question = QuestionModel.query.get_or_404(question_id)
+    if g.user != question.user:
+        flash("No authority for modification")
+        return redirect(url_for("question.detail", question_id=question_id))
+    if request.method == "POST":
+        form = QuestionForm()
+        if form.validate_on_submit():
+            form.populate_obj(question)
+            question.modified_date = datetime.now()
+            db.session.commit()
+            return redirect(url_for("question.detail", question_id=question_id))
+    else:
+        form = QuestionForm(obj=question)
+    return render_template("question/question_form.html", form=form)
+
+
+@bp.route("/delete/<int:question_id>")
+@signin_required
+def delete(question_id):
+    print(question_id)
+    question = QuestionModel.query.get_or_404(question_id)
+    if g.user != question.user:
+        flash("No authority for deletion")
+        return redirect(url_for("question.detail", question_id=question_id))
+    db.session.delete(question)
+    db.session.commit()
+    return redirect(url_for("question._list"))
