@@ -1,3 +1,4 @@
+import functools
 from flask import (
     Blueprint,
     url_for,
@@ -67,3 +68,13 @@ def load_signed_in_user():
         g.user = None
     else:
         g.user = UserModel.query.get(user_id)
+
+
+def signin_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for("account.signin"))
+        return view(**kwargs)
+
+    return wrapped_view

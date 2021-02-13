@@ -1,14 +1,17 @@
 from datetime import datetime
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, g
+
 from ..models.common import db
 from src.models.question import QuestionModel
 from ..forms import QuestionForm, AnswerForm
+from .account_views import signin_required
 
 
 bp = Blueprint("question", __name__, url_prefix="/question")
 
 
 @bp.route("/create/", methods=["GET", "POST"])
+@signin_required
 def create():
     form = QuestionForm()
     if request.method == "POST" and form.validate_on_submit():
@@ -16,6 +19,7 @@ def create():
             subject=form.subject.data,
             content=form.content.data,
             created_date=datetime.now(),
+            user=g.user,
         )
         db.session.add(question)
         db.session.commit()

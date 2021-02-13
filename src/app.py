@@ -9,6 +9,7 @@ from .models.common import db
 from .views import main_views, question_views, answer_views, account_views
 from .utils import crypto
 
+
 app = Flask(__name__)
 
 # Configuration
@@ -18,7 +19,10 @@ crypto.bcrypt = Bcrypt(app)
 # DB ORM
 migrate = Migrate()
 db.init_app(app)
-migrate.init_app(app, db)
+if app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite"):
+    migrate.init_app(app, db, render_as_batch=True)
+else:
+    migrate.init_app(app, db)
 
 # Blueprint
 app.register_blueprint(main_views.bp)

@@ -33,7 +33,12 @@
         </div>
         {% endfor %}
         <div class="form-group">
+            {% if not g.user %}
+            <textarea class="form-control" name="content" id="content" rows="10"
+                disabled>If you want to answer this question, SignIn first.</textarea>
+            {% else %}
             <textarea class="form-control" name="content" id="content" rows="10"></textarea>
+            {% endif %}
         </div>
         <input class="btn btn-primary" type="submit" value="Send" />
     </form>
