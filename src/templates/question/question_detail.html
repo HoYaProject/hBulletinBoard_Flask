@@ -22,10 +22,39 @@
             <div class="my-3">
                 <a class="btn btn-sm btn-outline-secondary"
                     href="{{ url_for('question.modify', question_id=question.id) }}">Modify</a>
-                <a class="delete btn btn-sm btn-outline-secondary" href="#"
-                    data-uri="{{ url_for('question.delete', question_id=question.id) }}">Delete</a>
+                <a class="delete btn btn-sm btn-outline-secondary"
+                    data-uri="{{ url_for('question.delete', question_id=question.id) }}" href="#">Delete</a>
             </div>
             {% endif %}
+
+            <!-- Comment -->
+            {% if question.comment_set|length > 0 %}
+            <div class="mt-3">
+                {% for comment in question.comment_set %}
+                <div class="comment py-2 text-muted">
+                    <span style="white-space: pre-line;">{{ comment.content }}</span>
+                    <span>
+                        - {{ comment.user.username }}, {{ comment.created_date|datetime }}
+                        {% if comment.modified_date %}
+                        (Modified at: {{ comment.modified_date|datetime}})
+                        {% endif %}
+                    </span>
+                    {% if g.user == comment.user %}
+                    <a class="small"
+                        href="{{ url_for('comment.modify_comment_for_question', comment_id=comment.id) }}">Modify</a> |
+                    <a class="small delete"
+                        data-uri="{{ url_for('comment.delete_comment_for_question', comment_id=comment.id) }}"
+                        href="#">Delete</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div>
+                <a class="small" href="{{ url_for('comment.create_comment_for_question', question_id=question.id) }}">
+                    <small>Add comment...</small>
+                </a>
+            </div>
         </div>
     </div>
 
@@ -50,15 +79,43 @@
             <div class="my-3">
                 <a class="btn btn-sm btn-outline-secondary"
                     href="{{ url_for('answer.modify', answer_id=answer.id) }}">Modify</a>
-                <a class="delete btn btn-sm btn-outline-secondary" href="#"
-                    data-uri="{{ url_for('answer.delete', answer_id=answer.id) }}">Delete</a>
+                <a class="delete btn btn-sm btn-outline-secondary"
+                    data-uri="{{ url_for('answer.delete', answer_id=answer.id) }}" href="#">Delete</a>
             </div>
             {% endif %}
+
+            <!-- Comment -->
+            {% if answer.comment_set|length > 0 %}
+            <div class="mt-3">
+                {% for comment in answer.comment_set %}
+                <div class="comment py-2 text-muted">
+                    <span style="white-space: pre-line;">{{ comment.content }}</span>
+                    <span>
+                        - {{ comment.user.username }}, {{ comment.created_date|datetime }}
+                        {% if comment.modified_date %}
+                        (Modified: {{ comment.modified_date|datetime }})
+                        {% endif %}
+                    </span>
+                    {% if g.user == comment.user %}
+                    <a class="small"
+                        href="{{ url_for('comment.modify_comment_for_answer', comment_id=comment.id) }}">Modify</a>
+                    <a class="small delete"
+                        href="{{ url_for('comment.delete_comment_for_answer', comment_id=comment.id) }}">Delete</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div>
+                <a class="small" href="{{ url_for('comment.create_comment_for_answer', answer_id=answer.id) }}">
+                    <small>Add comment...</small>
+                </a>
+            </div>
         </div>
     </div>
     {% endfor %}
 
-    <form class="my-3" action="{{ url_for('answer.create', question_id=question.id) }}" method="post">
+    <form action="{{ url_for('answer.create', question_id=question.id) }}" class="my-3" method="post">
         {{ form.csrf_token }}
         {% for field, errors in form.errors.items() %}
         <div class="alert alert-danger" role="alert">
@@ -66,12 +123,8 @@
         </div>
         {% endfor %}
         <div class="form-group">
-            {% if not g.user %}
-            <textarea class="form-control" name="content" id="content" rows="10"
-                disabled>If you want to answer this question, SignIn first.</textarea>
-            {% else %}
-            <textarea class="form-control" name="content" id="content" rows="10"></textarea>
-            {% endif %}
+            <textarea {% if not g.user %}disabled{% endif %} name="content" id="content" class="form-control"
+                rows="10"></textarea>
         </div>
         <input class="btn btn-primary" type="submit" value="Send" />
     </form>
@@ -88,5 +141,7 @@
             }
         })
     })
+
+
 </script>
 {% endblock %}

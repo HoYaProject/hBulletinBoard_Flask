@@ -30,3 +30,7 @@ class SignInForm(FlaskForm):
         "Username", validators=[DataRequired(), Length(min=3, max=25)]
     )
     password = PasswordField("Password", validators=[DataRequired()])
+
+
+class CommentForm(FlaskForm):
+    content = TextAreaField("Content", validators=[DataRequired()])
