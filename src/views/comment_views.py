@@ -26,7 +26,9 @@ def create_comment_for_question(question_id):
         )
         db.session.add(comment)
         db.session.commit()
-        return redirect(url_for("question.detail", question_id=question_id))
+        return redirect(
+            f"{url_for('question.detail', question_id=question_id)}#comment_{comment.id}"
+        )
     return render_template("comment/comment_form.html", form=form)
 
 
@@ -45,7 +47,9 @@ def modify_comment_for_question(comment_id):
             form.populate_obj(comment)
             comment.modified_date = datetime.now()
             db.session.commit()
-            return redirect(url_for("question.detail", question_id=comment.question.id))
+            return redirect(
+                f"{url_for('question.detail', question_id=comment.question.id)}#comment_{comment.id}"
+            )
     else:
         form = CommentForm(obj=comment)
 
@@ -79,7 +83,9 @@ def create_comment_for_answer(answer_id):
         )
         db.session.add(comment)
         db.session.commit()
-        return redirect(url_for("question.detail", question_id=answer.question.id))
+        return redirect(
+            f"{url_for('question.detail', question_id=answer.question.id)}#comment_{comment.id}"
+        )
     return render_template("comment/comment_form.html", form=form)
 
 
@@ -99,7 +105,7 @@ def modify_comment_for_answer(comment_id):
             comment.modified_date = datetime.now()
             db.session.commit()
             return redirect(
-                url_for("question.detail", question_id=comment.answer.question.id)
+                f"{url_for('question.detail', question_id=comment.answer.question.id)}#comment_{comment.id}"
             )
     else:
         form = CommentForm(obj=comment)
