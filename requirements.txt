@@ -6,4 +6,5 @@ flask-migrate
 flask-bootstrap4
 flask-WTF
 flask-bcrypt
+flask-markdown
 email-validator

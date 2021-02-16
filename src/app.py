@@ -3,6 +3,7 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 from flask_bcrypt import Bcrypt
+from flaskext.markdown import Markdown
 
 from .filter import format_datetime
 from .models.common import db
@@ -44,6 +45,9 @@ app.jinja_env.filters["datetime"] = format_datetime
 
 # Bootstrap
 Bootstrap(app)
+
+# Markdown
+Markdown(app, extensions=["nl2br", "fenced_code"])
 
 
 if __name__ == "__main__":
