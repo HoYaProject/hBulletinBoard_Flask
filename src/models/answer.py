@@ -1,4 +1,5 @@
 from .common import db
+from .like import answer_like
 
 
 class AnswerModel(db.Model):
@@ -21,3 +22,6 @@ class AnswerModel(db.Model):
     )
     user = db.relationship("UserModel", backref=db.backref("answer_set"))
     modified_date = db.Column(db.DateTime(), nullable=True)
+    like = db.relationship(
+        "UserModel", secondary=answer_like, backref=db.backref("answer_like_set")
+    )

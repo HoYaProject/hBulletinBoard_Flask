@@ -7,6 +7,7 @@
       <tr class="text-center thead-dark">
         <th>No</th>
         <th style="width: 50%">Subject</th>
+        <th>Like</th>
         <th>Writer</th>
         <th>Date</th>
       </tr>
@@ -21,6 +22,11 @@
           </a>
           {% if question.answer_set|length > 0 %}
           <span class="text-danger small ml-2">({{ question.answer_set|length }})</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if question.like|length > 0 %}
+          <span class="badge badge-warning px-2 py-1">{{ question.like|length }}</span>
           {% endif %}
         </td>
         <td>{{ question.user.username }}</td>

@@ -12,6 +12,7 @@ from .views import (
     question_views,
     answer_views,
     comment_views,
+    like_views,
 )
 from .utils import crypto
 
@@ -36,6 +37,7 @@ app.register_blueprint(account_views.bp)
 app.register_blueprint(question_views.bp)
 app.register_blueprint(answer_views.bp)
 app.register_blueprint(comment_views.bp)
+app.register_blueprint(like_views.bp)
 
 # Filter
 app.jinja_env.filters["datetime"] = format_datetime
