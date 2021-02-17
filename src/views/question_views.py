@@ -1,8 +1,12 @@
 from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, g, flash
+from sqlalchemy import func
 
 from ..models.common import db
-from src.models.question import QuestionModel
+from ..models.user import UserModel
+from ..models.question import QuestionModel
+from ..models.answer import AnswerModel
+from ..models.like import question_like
 from ..forms import QuestionForm, AnswerForm
 from .account_views import signin_required
 
@@ -30,9 +34,67 @@ def create():
 @bp.route("/list/")
 def _list():
     page = request.args.get("page", type=int, default=1)
-    question_list = QuestionModel.query.order_by(QuestionModel.created_date.desc())
+    keyword = request.args.get("keyword", type=str, default="")
+    sort = request.args.get("sort", type=str, default="recent")
+    print(sort)
+
+    # Sort
+    if sort == "recommend":
+        sub_query = (
+            db.session.query(
+                question_like.c.question_id, func.count("*").label("num_like")
+            )
+            .group_by(question_like.c.question_id)
+            .subquery()
+        )
+        question_list = QuestionModel.query.outerjoin(
+            sub_query, QuestionModel.id == sub_query.c.question_id
+        ).order_by(sub_query.c.num_like.desc(), QuestionModel.created_date.desc())
+    elif sort == "popular":
+        sub_query = (
+            db.session.query(
+                AnswerModel.question_id, func.count("*").label("num_answer")
+            )
+            .group_by(AnswerModel.question_id)
+            .subquery()
+        )
+        question_list = QuestionModel.query.outerjoin(
+            sub_query, QuestionModel.id == sub_query.c.question_id
+        ).order_by(sub_query.c.num_answer.desc(), QuestionModel.created_date.desc())
+    else:
+        question_list = QuestionModel.query.order_by(QuestionModel.created_date.desc())
+
+    # Search
+    if keyword:
+        search = "%%{}%%".format(keyword)
+        sub_query = (
+            db.session.query(
+                AnswerModel.question_id, AnswerModel.content, UserModel.username
+            )
+            .join(UserModel, AnswerModel.user_id == UserModel.id)
+            .subquery()
+        )
+        question_list = (
+            question_list.join(UserModel)
+            .outerjoin(sub_query, sub_query.c.question_id == QuestionModel.id)
+            .filter(
+                QuestionModel.subject.ilike(search)
+                | QuestionModel.content.ilike(search)
+                | UserModel.username.ilike(search)
+                | sub_query.c.content.ilike(search)
+                | sub_query.c.username.ilike(search),
+            )
+            .distinct()
+        )
     question_list = question_list.paginate(page, per_page=10)
-    return render_template("question/question_list.html", question_list=question_list)
+
+    return render_template(
+        "question/question_list.html",
+        question_list=question_list,
+        page=page,
+        keyword=keyword,
+        sort=sort,
+    )
 
 
 @bp.route("/detail/<int:question_id>/")
@@ -44,7 +106,7 @@ def detail(question_id):
     )
 
 
-@bp.route("/modify/<int:question_id>", methods=("GET", "POST"))
+@bp.route("/modify/<int:question_id>", methods=["GET", "POST"])
 @signin_required
 def modify(question_id):
     question = QuestionModel.query.get_or_404(question_id)
