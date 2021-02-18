@@ -1,4 +1,3 @@
-import config
 from flask import Flask
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
@@ -21,7 +20,7 @@ from .utils import crypto
 app = Flask(__name__)
 
 # Configuration
-app.config.from_object(config)
+app.config.from_envvar("APP_CONFIG_FILE")
 crypto.bcrypt = Bcrypt(app)
 
 # DB ORM
@@ -51,4 +50,4 @@ Markdown(app, extensions=["nl2br", "fenced_code"])
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=8080)

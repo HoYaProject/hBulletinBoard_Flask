@@ -56,7 +56,7 @@
                             {% if g.user == comment.user %}
                             <a class="small"
                                 href="{{ url_for('comment.modify_comment_for_question', comment_id=comment.id) }}">Modify</a>
-                            |
+                            <span class="small">|</span>
                             <a class="small delete"
                                 data-uri="{{ url_for('comment.delete_comment_for_question', comment_id=comment.id) }}"
                                 href="#">Delete</a>
@@ -128,6 +128,7 @@
                             {% if g.user == comment.user %}
                             <a class="small"
                                 href="{{ url_for('comment.modify_comment_for_answer', comment_id=comment.id) }}">Modify</a>
+                            <span class="small">|</span>
                             <a class="small delete"
                                 href="{{ url_for('comment.delete_comment_for_answer', comment_id=comment.id) }}">Delete</a>
                             {% endif %}
