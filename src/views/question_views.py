@@ -36,7 +36,6 @@ def _list():
     page = request.args.get("page", type=int, default=1)
     keyword = request.args.get("keyword", type=str, default="")
     sort = request.args.get("sort", type=str, default="recent")
-    print(sort)
 
     # Sort
     if sort == "recommend":
@@ -128,7 +127,6 @@ def modify(question_id):
 @bp.route("/delete/<int:question_id>")
 @signin_required
 def delete(question_id):
-    print(question_id)
     question = QuestionModel.query.get_or_404(question_id)
     if g.user != question.user:
         flash("No authority for deletion")
