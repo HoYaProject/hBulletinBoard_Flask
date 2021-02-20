@@ -76,8 +76,18 @@
         </div>
     </div>
 
-    <h5 class="border-bottom my-3 py-2">There are {{ question.answer_set|length }} answers.</h5>
-    {% for answer in question.answer_set %}
+    <div class="row justify-content-between my-3 border-top">
+        <h5 class="py-2">There are <strong>{{ question.answer_set|length }}</strong> answers.</h5>
+        <!-- Sort -->
+        <div class="py-2 col-2">
+            <select class="form-control sort">
+                <option value="recent" {% if sort=='recent' %}selected{% endif %}>Recent</option>
+                <option value="recommend" {% if sort=='recommend' %}selected{% endif %}>Recommend</option>
+            </select>
+        </div>
+    </div>
+
+    {% for answer in answer_list.items %}
     <a name="answer_{{ answer.id }}"></a>
     <div class="row my-3">
         <!-- Like -->
@@ -147,6 +157,49 @@
     </div>
     {% endfor %}
 
+    <!-- Pagination -->
+    <ul class="pagination justify-content-center">
+        <!-- Previous Page -->
+        {% if answer_list.has_prev %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ answer_list.prev_num }}" href="#">Prev</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">Prev</a>
+        </li>
+        {% endif %}
+
+        {% for page_num in answer_list.iter_pages() %}
+        {% if page_num %}
+        {% if page_num != answer_list.page %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ page_num }}" href="#">{{ page_num }}</a>
+        </li>
+        {% else %}
+        <li class="page-item active" aria-current="page">
+            <a class="page-link" href="#">{{ page_num }}</a>
+        </li>
+        {% endif %}
+        {% else %}
+        <li class="disabled">
+            <a class="page-link" href="#">...</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        <!-- Next Page -->
+        {% if answer_list.has_next %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ answer_list.next_num }}" href="#">Next</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+
     <form action="{{ url_for('answer.create', question_id=question.id) }}" class="my-3" method="post">
         {{ form.csrf_token }}
         {% for field, errors in form.errors.items() %}
@@ -161,6 +214,11 @@
         <input class="btn btn-primary" type="submit" value="Send" />
     </form>
 </div>
+
+<form id="detailForm" method="get" action="{{ url_for('question.detail', question_id=question.id) }}">
+    <input id="page" type="hidden" name="page" value="{{ page }}">
+    <input id="sort" type="hidden" name="sort" value="{{ sort }}">
+</form>
 {% endblock %}
 
 {% block scripts %}
@@ -179,5 +237,20 @@
             location.href = $(this).data('uri')
         }
     })
+
+    // Sort
+    $(document).ready(function () {
+        $(".sort").on('change', function () {
+            $('#sort').val($(this).val());
+            $('#page').val(1)
+            $("#detailForm").submit();
+        });
+    });
+
+    // Pagination
+    $(".page-link").on('click', function () {
+        $("#page").val($(this).data("page"));
+        $("#detailForm").submit();
+    });
 </script>
 {% endblock %}

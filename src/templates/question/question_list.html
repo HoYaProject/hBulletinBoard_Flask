@@ -32,7 +32,8 @@
             </tr>
         </thead>
         <tbody>
-            {% if question_list %} {% for question in question_list.items %}
+            {% if question_list %}
+            {% for question in question_list.items %}
             <tr class="text-center">
                 <td>{{ question_list.total - ((question_list.page - 1) * question_list.per_page) - loop.index0 }}</td>
                 <td class="text-left">
@@ -51,7 +52,8 @@
                 <td>{{ question.user.username }}</td>
                 <td>{{ question.created_date|datetime }}</td>
             </tr>
-            {% endfor %} {% else %}
+            {% endfor %}
+            {% else %}
             <tr>
                 <td colspan="3">There are no questions.</td>
             </tr>

@@ -6,7 +6,7 @@ from ..models.common import db
 from ..models.user import UserModel
 from ..models.question import QuestionModel
 from ..models.answer import AnswerModel
-from ..models.like import question_like
+from ..models.like import question_like, answer_like
 from ..forms import QuestionForm, AnswerForm
 from .account_views import signin_required
 
@@ -98,10 +98,36 @@ def _list():
 
 @bp.route("/detail/<int:question_id>/")
 def detail(question_id):
+    page = request.args.get("page", type=int, default=1)
+    sort = request.args.get("sort", type=str, default="recent")
+
+    # Sort
+    if sort == "recommend":
+        sub_query = (
+            db.session.query(answer_like.c.answer_id, func.count("*").label("num_like"))
+            .group_by(answer_like.c.answer_id)
+            .subquery()
+        )
+        answer_list = (
+            AnswerModel.query.filter(AnswerModel.question_id == question_id)
+            .outerjoin(sub_query, AnswerModel.id == sub_query.c.answer_id)
+            .order_by(sub_query.c.num_like.desc(), AnswerModel.created_date.desc())
+        )
+    else:
+        answer_list = AnswerModel.query.filter(
+            AnswerModel.question_id == question_id
+        ).order_by(AnswerModel.created_date.desc())
+    answer_list = answer_list.paginate(page, per_page=5)
+
     form = AnswerForm()
     question = QuestionModel.query.get_or_404(question_id)
     return render_template(
-        "question/question_detail.html", question=question, form=form
+        "question/question_detail.html",
+        question=question,
+        answer_list=answer_list,
+        page=page,
+        sort=sort,
+        form=form,
     )
 
 
