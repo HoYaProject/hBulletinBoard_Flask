@@ -1,0 +1,11 @@
+<nav id="sidebar" class="border-top border-secondary">
+    <div class="list-group">
+        <a href="{{ url_for('question._list', category='qna') }}"
+            class="rounded-0 list-group-item list-group-item-action list-group-item-light {% if category == 'qna' %}active{% endif %}">Q&A</a>
+        <a href="{{ url_for('question._list', category='free') }}"
+            class="rounded-0 list-group-item list-group-item-action list-group-item-light {% if category == 'free' %}active{% endif %}">Free
+            Board</a>
+        <a href="{{ url_for('question._list', category='tip') }}"
+            class="rounded-0 list-group-item list-group-item-action list-group-item-light {% if category == 'tip' %}active{% endif %}">Tip</a>
+    </div>
+</nav>

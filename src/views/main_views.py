@@ -7,4 +7,4 @@ bp = Blueprint("main", __name__, url_prefix="/")
 @bp.route("/")
 def index():
     current_app.logger.info("This is a user log")
-    return redirect(url_for("question._list"))
+    return redirect(url_for("question._list", category="qna"))

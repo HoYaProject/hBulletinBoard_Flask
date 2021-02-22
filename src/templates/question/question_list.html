@@ -1,13 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container my-3">
+<div class="py-2">
+    <h5 class="border-bottom pb-2 mb-3">
+        {% if category == 'qna' %}
+        Q & A
+        {% elif category == 'free' %}
+        Free Board
+        {% elif category == 'tip' %}
+        Tip
+        {% endif %}
+    </h5>
     <div class="row justify-content-between my-3">
         <!-- Sort -->
         <div class="col-2">
             <select class="form-control sort">
                 <option value="recent" {% if sort=='recent' %}selected{% endif %}>Recent</option>
-                <option value="recommend" {% if sort=='recommend' %}selected{% endif %}>Recommend</option>
+                <option value="recommend" {% if sort=='recommend' %}selected{% endif %}>Recommend
+                </option>
                 <option value="popular" {% if sort=='popular' %}selected{% endif %}>Popular</option>
             </select>
         </div>
@@ -35,7 +45,10 @@
             {% if question_list %}
             {% for question in question_list.items %}
             <tr class="text-center">
-                <td>{{ question_list.total - ((question_list.page - 1) * question_list.per_page) - loop.index0 }}</td>
+                <td>{{ question_list.total - ((question_list.page - 1) * question_list.per_page) -
+                    loop.index0
+                    }}
+                </td>
                 <td class="text-left">
                     <a href="{{ url_for('question.detail', question_id=question.id) }}">
                         {{ question.subject }}
@@ -102,10 +115,10 @@
         {% endif %}
     </ul>
 
-    <a href="{{ url_for('question.create') }}" class="btn btn-primary">Post Question</a>
+    <a href="{{ url_for('question.create', category=category) }}" class="btn btn-primary">Post Question</a>
 </div>
 
-<form id="searchForm" method="get" action="{{ url_for('question._list') }}">
+<form id="searchForm" method="get" action="{{ url_for('question._list', category='qna') }}">
     <input id="page" type="hidden" name="page" value="{{ page }}">
     <input id="keyword" type="hidden" name="keyword" value="{{ keyword or '' }}">
     <input id="sort" type="hidden" name="sort" value="{{ sort }}">
@@ -116,15 +129,20 @@
 {{ super() }}
 <script type='text/javascript'>
     $(document).ready(function () {
+        // Sort
         $(".sort").on('change', function () {
             $('#sort').val($(this).val());
             $('#page').val(1);
             $('#searchForm').submit();
         });
+
+        // Pagination
         $(".page-link").on('click', function () {
             $("#page").val($(this).data("page"));
             $("#searchForm").submit();
         });
+
+        // Search
         $("#btn_search").on('click', function () {
             $("#page").val(1);
             $("#keyword").val($(".keyword").val());

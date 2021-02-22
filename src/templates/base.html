@@ -1,9 +1,28 @@
-{% extends "bootstrap/base.html" %}
-
-{% block title %}
-hBB
-{% endblock %}
-
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
+<title>
+    hBB
+</title>
+
+{% extends "bootstrap/base.html" %}
+
+{% block body %}
 {% include 'navbar.html' %}
+<div class="container my-3">
+    <div class="row">
+        <div class="col-sm-12 col-md-3 col-lg-2 p-2">
+            {% include 'sidebar.html' %}
+        </div>
+        <div class="col-sm-12 col-md-9 col-lg-10 p-2">
+            <div class="border-top border-secondary">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}
+{% endblock %}

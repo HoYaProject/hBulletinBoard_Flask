@@ -14,12 +14,13 @@ from .account_views import signin_required
 bp = Blueprint("question", __name__, url_prefix="/question")
 
 
-@bp.route("/create/", methods=["GET", "POST"])
+@bp.route("/create/<string:category>", methods=["GET", "POST"])
 @signin_required
-def create():
+def create(category="qna"):
     form = QuestionForm()
     if request.method == "POST" and form.validate_on_submit():
         question = QuestionModel(
+            category=category,
             subject=form.subject.data,
             content=form.content.data,
             created_date=datetime.now(),
@@ -27,15 +28,18 @@ def create():
         )
         db.session.add(question)
         db.session.commit()
-        return redirect(url_for("main.index"))
+        return redirect(url_for("question._list", category=category))
     return render_template("question/question_form.html", form=form)
 
 
-@bp.route("/list/")
-def _list():
+@bp.route("/list/<string:category>")
+def _list(category="qna"):
     page = request.args.get("page", type=int, default=1)
     keyword = request.args.get("keyword", type=str, default="")
     sort = request.args.get("sort", type=str, default="recent")
+
+    # Category
+    question_list = QuestionModel.query.filter(QuestionModel.category == category)
 
     # Sort
     if sort == "recommend":
@@ -46,7 +50,7 @@ def _list():
             .group_by(question_like.c.question_id)
             .subquery()
         )
-        question_list = QuestionModel.query.outerjoin(
+        question_list = question_list.outerjoin(
             sub_query, QuestionModel.id == sub_query.c.question_id
         ).order_by(sub_query.c.num_like.desc(), QuestionModel.created_date.desc())
     elif sort == "popular":
@@ -57,11 +61,11 @@ def _list():
             .group_by(AnswerModel.question_id)
             .subquery()
         )
-        question_list = QuestionModel.query.outerjoin(
+        question_list = question_list.outerjoin(
             sub_query, QuestionModel.id == sub_query.c.question_id
         ).order_by(sub_query.c.num_answer.desc(), QuestionModel.created_date.desc())
     else:
-        question_list = QuestionModel.query.order_by(QuestionModel.created_date.desc())
+        question_list = question_list.order_by(QuestionModel.created_date.desc())
 
     # Search
     if keyword:
@@ -89,6 +93,7 @@ def _list():
 
     return render_template(
         "question/question_list.html",
+        category=category,
         question_list=question_list,
         page=page,
         keyword=keyword,
@@ -100,6 +105,9 @@ def _list():
 def detail(question_id):
     page = request.args.get("page", type=int, default=1)
     sort = request.args.get("sort", type=str, default="recent")
+
+    # Category
+    category = QuestionModel.query.get_or_404(question_id).category
 
     # Sort
     if sort == "recommend":
@@ -123,6 +131,7 @@ def detail(question_id):
     question = QuestionModel.query.get_or_404(question_id)
     return render_template(
         "question/question_detail.html",
+        category=category,
         question=question,
         answer_list=answer_list,
         page=page,
@@ -154,9 +163,10 @@ def modify(question_id):
 @signin_required
 def delete(question_id):
     question = QuestionModel.query.get_or_404(question_id)
+    category = question.category
     if g.user != question.user:
         flash("No authority for deletion")
         return redirect(url_for("question.detail", question_id=question_id))
     db.session.delete(question)
     db.session.commit()
-    return redirect(url_for("question._list"))
+    return redirect(url_for("question._list", category=category))
