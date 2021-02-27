@@ -3,18 +3,20 @@ from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 from flask_bcrypt import Bcrypt
 from flaskext.markdown import Markdown
+from flask_mail import Mail
 
 from .filter import format_datetime
 from .models.common import db
 from .views import (
     main_views,
+    common_views,
     account_views,
     question_views,
     answer_views,
     comment_views,
     like_views,
 )
-from .utils import crypto
+from .utils import crypto, email
 
 
 def page_not_found(e):
@@ -37,6 +39,7 @@ else:
 
 # Blueprint
 app.register_blueprint(main_views.bp)
+app.register_blueprint(common_views.bp)
 app.register_blueprint(account_views.bp)
 app.register_blueprint(question_views.bp)
 app.register_blueprint(answer_views.bp)
@@ -54,6 +57,9 @@ Bootstrap(app)
 
 # Markdown
 Markdown(app, extensions=["nl2br", "fenced_code"])
+
+# Email
+email.email = Mail(app)
 
 
 if __name__ == "__main__":

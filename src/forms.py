@@ -34,3 +34,23 @@ class SignInForm(FlaskForm):
 
 class CommentForm(FlaskForm):
     content = TextAreaField("Content", validators=[DataRequired()])
+
+
+class BaseForm(FlaskForm):
+    username = StringField(
+        "Username", validators=[DataRequired(), Length(min=3, max=25)]
+    )
+    email = EmailField("Email", validators=[DataRequired(), Email()])
+
+
+class PasswordForm(FlaskForm):
+    old_password = PasswordField("Old Password", validators=[DataRequired()])
+    new_password1 = PasswordField(
+        "New Password",
+        validators=[DataRequired(), EqualTo("new_password2", "Password doesn't match")],
+    )
+    new_password2 = PasswordField("Password Confirm", validators=[DataRequired()])
+
+
+class ForgotPasswordForm(FlaskForm):
+    email = EmailField("Email", validators=[DataRequired(), Email()])

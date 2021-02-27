@@ -13,7 +13,7 @@ bp = Blueprint("like", __name__, url_prefix="/like")
 def question(question_id):
     _question = QuestionModel.query.get_or_404(question_id)
     if g.user == _question.user:
-        flash("Can't like own question")
+        flash("Can't like own question", "error")
     else:
         _question.like.append(g.user)
         db.session.commit()
@@ -25,7 +25,7 @@ def question(question_id):
 def answer(answer_id):
     _answer = AnswerModel.query.get_or_404(answer_id)
     if g.user == _answer.user:
-        flash("Can't like own answer")
+        flash("Can't like own answer", "error")
     else:
         _answer.like.append(g.user)
         db.session.commit()

@@ -6,7 +6,7 @@
     <form class="post-form my-3" method="post">
         {{ form.csrf_token }}
 
-        {% include 'form_errors.html' %}
+        {% include 'form_messages.html' %}
 
         <div class="form-group">
             <label for="content">Content of Comment</label>

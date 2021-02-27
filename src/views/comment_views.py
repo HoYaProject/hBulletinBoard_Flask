@@ -38,7 +38,7 @@ def modify_comment_for_question(comment_id):
     comment = CommentModel.query.get_or_404(comment_id)
 
     if g.user != comment.user:
-        flash("No authority for modification")
+        flash("No authority for modification", "error")
         return redirect(url_for("question.detail", question_id=comment.question.id))
 
     if request.method == "POST":
@@ -62,7 +62,7 @@ def delete_comment_for_question(comment_id):
     comment = CommentModel.query.get_or_404(comment_id)
     question_id = comment.question.id
     if g.user != comment.user:
-        flash("No authority for deletion")
+        flash("No authority for deletion", "error")
         return redirect(url_for("question.detail", question_id=question_id))
     db.session.delete(comment)
     db.session.commit()
@@ -95,7 +95,7 @@ def modify_comment_for_answer(comment_id):
     comment = CommentModel.query.get_or_404(comment_id)
 
     if g.user != comment.user:
-        flash("No authority for modification")
+        flash("No authority for modification", "error")
         return redirect(url_for("question.detail", question_id=comment.answer.id))
 
     if request.method == "POST":
@@ -119,7 +119,7 @@ def delete_comment_for_answer(comment_id):
     comment = CommentModel.query.get_or_404(comment_id)
     question_id = comment.answer.question.id
     if g.user != comment.user:
-        flash("No authority for deletion")
+        flash("No authority for deletion", "error")
         return redirect(url_for("question.detail", question_id=question_id))
     db.session.delete(comment)
     db.session.commit()

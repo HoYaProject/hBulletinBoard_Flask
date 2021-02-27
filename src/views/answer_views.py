@@ -34,7 +34,7 @@ def create(question_id):
 def modify(answer_id):
     answer = AnswerModel.query.get_or_404(answer_id)
     if g.user != answer.user:
-        flsh("No authority for modification")
+        flash("No authority for modification", "error"),
         return redirect(url_for("question.detail", question_id=answer.question.id))
     if request.method == "POST":
         form = AnswerForm()
@@ -56,7 +56,7 @@ def delete(answer_id):
     answer = AnswerModel.query.get_or_404(answer_id)
     question_id = answer.question.id
     if g.user != answer.user:
-        flash("No authority for deletion")
+        flash("No authority for deletion", "error")
     else:
         db.session.delete(answer)
         db.session.commit()

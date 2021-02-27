@@ -145,7 +145,7 @@ def detail(question_id):
 def modify(question_id):
     question = QuestionModel.query.get_or_404(question_id)
     if g.user != question.user:
-        flash("No authority for modification")
+        flash("No authority for modification", "error")
         return redirect(url_for("question.detail", question_id=question_id))
     if request.method == "POST":
         form = QuestionForm()
@@ -165,7 +165,7 @@ def delete(question_id):
     question = QuestionModel.query.get_or_404(question_id)
     category = question.category
     if g.user != question.user:
-        flash("No authority for deletion")
+        flash("No authority for deletion", "error")
         return redirect(url_for("question.detail", question_id=question_id))
     db.session.delete(question)
     db.session.commit()
