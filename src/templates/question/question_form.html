@@ -16,6 +16,7 @@
             <label for="content">Content</label>
             <textarea class="form-control" id="content" name="content"
                 rows="10">{{ form.content.data or '' }}</textarea>
+            {{ simplemde.load }}
         </div>
         <button class="btn btn-primary" type="submit">Post</button>
     </form>

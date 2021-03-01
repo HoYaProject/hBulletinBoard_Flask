@@ -7,6 +7,16 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 SECRET_KEY = b"\xd3DLYd\x99\x88\xb6\xf6\xcd\xbe\x12j\xcc\x9d\xdb"
 
+SIMPLEMDE_JS_IIFE = True
+SIMPLEMDE_USE_CDN = True
+
+MAIL_SERVER = "smtp.gmail.com"
+MAIL_PORT = 465
+MAIL_USERNAME = ""
+MAIL_PASSWORD = ""
+MAIL_USE_TLS = False
+MAIL_USE_SSL = True
+
 dictConfig(
     {
         "version": 1,

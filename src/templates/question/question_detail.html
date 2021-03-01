@@ -208,6 +208,7 @@
         <div class="form-group">
             <textarea {% if not g.user %}disabled{% endif %} name="content" id="content" class="form-control"
                 rows="10"></textarea>
+            {{ simplemde.load }}
         </div>
         <input class="btn btn-primary" type="submit" value="Send" />
     </form>

@@ -7,5 +7,6 @@ flask-bootstrap4
 flask-WTF
 flask-bcrypt
 flask-markdown
+flask-simplemde
 flask-mail
 email-validator

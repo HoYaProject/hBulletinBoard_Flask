@@ -3,6 +3,7 @@ from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 from flask_bcrypt import Bcrypt
 from flaskext.markdown import Markdown
+from flask_simplemde import SimpleMDE
 from flask_mail import Mail
 
 from .filter import format_datetime
@@ -57,6 +58,7 @@ Bootstrap(app)
 
 # Markdown
 Markdown(app, extensions=["nl2br", "fenced_code"])
+SimpleMDE(app)
 
 # Email
 email.email = Mail(app)
