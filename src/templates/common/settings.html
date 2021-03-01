@@ -5,14 +5,14 @@
     <h5 class="border-bottom pb-2 mb-3">Settings</h5>
 
     <ul class="nav nav-tabs">
-        <li class="nav-item"><a href="{{ url_for('common.base') }}"
+        <li class="nav-item"><a href="{{ url_for('common.settings_base') }}"
                 class="nav-link {% if tabs == 'base' %}active{% endif %}">Information</a></li>
         <li class="nav-item"><a href="{{ url_for('common.password') }}"
                 class="nav-link {% if tabs == 'password' %}active{% endif %}">Change Password</a></li>
     </ul>
 
     {% if tabs == 'base' %}
-    <form action="{{ url_for('common.base') }}" method="post" class="post-form py-3">
+    <form action="{{ url_for('common.settings_base') }}" method="post" class="post-form py-3">
         {{ form.csrf_token }}
 
         {% include "form_messages.html" %}

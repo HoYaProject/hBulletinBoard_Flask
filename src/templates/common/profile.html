@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-2">
+    <h5 class="border-bottom pb-2 mb-3">{{ user.username }}</h5>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item"><a href="{{ url_for('common.profile_base', id=user.id) }}"
+                class="nav-link {% if tabs == 'base' %}active{% endif %}">Information</a></li>
+        <li class="nav-item"><a href="{{ url_for('common.profile_question', id=user.id) }}"
+                class="nav-link {% if tabs == 'question' %}active{% endif %}">Question</a></li>
+        <li class="nav-item"><a href="{{ url_for('common.profile_answer', id=user.id) }}"
+                class="nav-link {% if tabs == 'answer' %}active{% endif %}">Answer</a></li>
+        <li class="nav-item"><a href="{{ url_for('common.profile_comment', id=user.id) }}"
+                class="nav-link {% if tabs == 'comment' %}active{% endif %}">Comment</a></li>
+    </ul>
+
+    {% if tabs == 'base' %}
+    <div class="p-4">
+        <strong>Activity Score</strong>
+        <p></p>
+    </div>
+    {% else %}
+    <div class="p-4">
+        <!-- Sort -->
+        <div class="row mb-3">
+            <div class="col-3">
+                <select class="form-control sort">
+                    <option value="recent" {% if sort=='recent' %}selected{% endif %}>Recent</option>
+                    <option value="recommend" {% if sort=='recommend' %}selected{% endif %}>Recommend
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr class="text-center thead-dark">
+                    <th>No</th>
+                    <th>Category</th>
+                    {% if tabs == 'question' %}
+                    <th style="width: 50%">Subject</th>
+                    {% else %}
+                    <th style="width: 50%">Content</th>
+                    {% endif %}
+                    <th>Like</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if posting_list %}
+                {% for post in posting_list.items %}
+                <tr class="text-center">
+                    <td>{{ posting_list.total - ((posting_list.page - 1) * posting_list.per_page) -
+                        loop.index0
+                        }}
+                    </td>
+                    <td>
+                        {% if tabs == 'question' %}
+                        {{ post.category }}
+                        {% elif tabs == 'answer' %}
+                        {{ post.question.category }}
+                        {% elif tabs == 'comment' %}
+                        {% if post.question %}
+                        {{ post.question.category}}
+                        {% else %}
+                        {{ post.answer.question.category}}
+                        {% endif %}
+                        {% endif %}
+                    </td>
+                    <td class="text-left">
+                        {% if tabs == 'question' %}
+                        <a href="{{ url_for('question.detail', question_id=post.id) }}">
+                            {{ post.subject }}
+                        </a>
+                        {% if post.answer_set|length > 0 %}
+                        <span class="text-danger small ml-2">({{ post.answer_set|length }})</span>
+                        {% endif %}
+                        {% elif tabs == 'answer' %}
+                        <a href="{{ url_for('question.detail', question_id=post.question_id) }}">
+                            {{ post.content }}
+                        </a>
+                        {% elif tabs == 'comment' %}
+                        {% if post.question %}
+                        <a href="{{ url_for('question.detail', question_id=post.question_id) }}">
+                            {{ post.content }}
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('question.detail', question_id=post.answer.question_id) }}">
+                            {{ post.content }}
+                        </a>
+                        {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if post.like|length > 0 %}
+                        <span class="badge badge-warning px-2 py-1">{{ post.like|length }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ post.created_date|datetime }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="3">There are no posts.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <ul class="pagination justify-content-center">
+            <!-- Previous Page -->
+            {% if posting_list.has_prev %}
+            <li class="page-item">
+                <a class="page-link" data-page="{{ posting_list.prev_num }}" href="#">Prev</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#">Prev</a>
+            </li>
+            {% endif %}
+            {% for page_num in posting_list.iter_pages() %}
+            {% if page_num %}
+            {% if page_num != posting_list.page %}
+            <li class="page-item">
+                <a class="page-link" data-page="{{ page_num }}" href="#">{{ page_num }}</a>
+            </li>
+            {% else %}
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="#">{{ page_num }}</a>
+            </li>
+            {% endif %}
+            {% else %}
+            <li class="disabled">
+                <a class="page-link" href="#">...</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+            <!-- Next Page -->
+            {% if posting_list.has_next %}
+            <li class="page-item">
+                <a class="page-link" data-page="{{ posting_list.next_num }}" href="#">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+</div>
+
+{% if tabs == 'question' %}
+<form id="profileForm" method="get" action="{{ url_for('common.profile_question', id=user.id) }}">
+    <input id="page" type="hidden" name="page" value="{{ page }}">
+    <input id="sort" type="hidden" name="sort" value="{{ sort }}">
+</form>
+{% elif tabs == 'answer' %}
+<form id="profileForm" method="get" action="{{ url_for('common.profile_answer', id=user.id) }}">
+    <input id="page" type="hidden" name="page" value="{{ page }}">
+    <input id="sort" type="hidden" name="sort" value="{{ sort }}">
+</form>
+{% elif tabs == 'comment' %}
+<form id="profileForm" method="get" action="{{ url_for('common.profile_comment', id=user.id) }}">
+    <input id="page" type="hidden" name="page" value="{{ page }}">
+    <input id="sort" type="hidden" name="sort" value="{{ sort }}">
+</form>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type='text/javascript'>
+    $(document).ready(function () {
+        // Sort
+        $(".sort").on('change', function () {
+            $('#sort').val($(this).val());
+            $('#page').val(1);
+            $('#profileForm').submit();
+        });
+
+        // Pagination
+        $(".page-link").on('click', function () {
+            $("#page").val($(this).data("page"));
+            $("#profileForm").submit();
+        });
+    });
+</script>
+{% endblock %}
